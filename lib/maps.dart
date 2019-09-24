@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapsHome extends StatefulWidget {
@@ -13,34 +14,72 @@ class MapsHome extends StatefulWidget {
 class MapsHomeState extends State<MapsHome>
     with AutomaticKeepAliveClientMixin<MapsHome> {
   Completer<GoogleMapController> _controller = Completer();
-  final mark = Marker(
+  var mark = Marker(
       position: LatLng(37.42796133580664, -122.085749655962),
       markerId: MarkerId('olaa'),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed));
   final Set<Marker> markerSet = new Set();
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
-
-  static final CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
+  LocationData petLocation;
+  LatLng petLatLng;
+  CameraPosition petPos = CameraPosition(
+    target: LatLng(-19.885121, -44.418271),
+    zoom: 15,
+  ); //receber da placa
+  Location locationService = new Location();
 
   Future<void> goToPet() async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+    controller.animateCamera(CameraUpdate.newCameraPosition(petPos));
+  }
+
+  //platform configuration
+  initPlatformState() async {
+    await locationService.changeSettings(
+        accuracy: LocationAccuracy.HIGH, interval: 1000);
+    bool serviceStatus = await locationService.serviceEnabled();
+    if (serviceStatus) {
+      bool permission = await locationService.requestPermission();
+      if (permission) {
+        petLocation = await locationService.getLocation();
+        setState(() {
+          petPos = CameraPosition(
+            target: LatLng(petLocation.latitude, petLocation.longitude),
+            zoom: 20,
+          );
+        });
+      }
+    }
+  }
+
+  void sendLocation() async {
+    locationService.onLocationChanged().listen((LocationData result) async {
+      petLatLng = LatLng(result.latitude, result.longitude);
+      petPos = CameraPosition(
+        target: petLatLng,
+        zoom: 20,
+      );
+      setState(() {
+        markerSet.add(Marker(
+            position: petLatLng,
+            markerId: MarkerId('hehe'),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueBlue)));
+      });
+      //enviar para a placa
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initPlatformState();
+    sendLocation();
   }
 
   @mustCallSuper
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      markerSet.add(mark);
-    });
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -51,7 +90,7 @@ class MapsHomeState extends State<MapsHome>
       ),
       body: GoogleMap(
         markers: markerSet,
-        initialCameraPosition: _kGooglePlex,
+        initialCameraPosition: petPos,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
         },
