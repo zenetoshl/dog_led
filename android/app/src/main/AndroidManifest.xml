@@ -10,6 +10,9 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="dog_led"
         android:icon="@mipmap/ic_launcher">
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyBkDk3hHlfuLjZDIWJYHK2Ct8C21S28Zxw"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -17,10 +20,6 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-            <!-- This keeps the window background of the activity showing
-                 until Flutter renders its first frame. It can be removed if
-                 there is no splash screen (such as the default splash screen
-                 defined in @style/LaunchTheme). -->
             <meta-data
                 android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
                 android:value="true" />
@@ -30,4 +29,5 @@
             </intent-filter>
         </activity>
     </application>
+        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest>
