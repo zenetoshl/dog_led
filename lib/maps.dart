@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapsHome extends StatefulWidget {
@@ -19,7 +20,7 @@ class MapsHomeState extends State<MapsHome>
       markerId: MarkerId('olaa'),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed));
   final Set<Marker> markerSet = new Set();
-
+  String title = '<Meu Pet>';
   LocationData petLocation;
   LatLng petLatLng;
   CameraPosition petPos = CameraPosition(
@@ -73,6 +74,7 @@ class MapsHomeState extends State<MapsHome>
   @override
   void initState() {
     super.initState();
+    _read();
     initPlatformState();
     sendLocation();
   }
@@ -84,7 +86,7 @@ class MapsHomeState extends State<MapsHome>
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          widget.title,
+          title,
           textAlign: TextAlign.center,
         ),
       ),
@@ -102,6 +104,17 @@ class MapsHomeState extends State<MapsHome>
       ),
     );
   }
+
+  _read() async {
+        final prefs = await SharedPreferences.getInstance();
+        final key = 'my_int_key';
+        final String newString = prefs.getString(key) ?? '';
+        if(newString != '')
+        setState(() {
+          title = prefs.getString(key);
+        });
+        print('read: $title');
+      }
 
   @override
   bool get wantKeepAlive => true;

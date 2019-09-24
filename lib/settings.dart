@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsHome extends StatefulWidget {
-  SettingsHome({ this.title});
+  SettingsHome({this.title});
 
   final String title;
 
-  SettingsHomeState createState() => SettingsHomeState(); 
+  SettingsHomeState createState() => SettingsHomeState();
 }
 
 class SettingsHomeState extends State<SettingsHome> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  String newName;
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +23,24 @@ class SettingsHomeState extends State<SettingsHome> {
               'You are in the Settings section',
             ),
             Text(
-              '$_counter',
+              'Settings Only',
               style: Theme.of(context).textTheme.display1,
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _save,
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),
     );
+  }
+
+  _save() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'my_int_key';
+    final value = newName ?? null;
+    if (value == null) prefs.setString(key, value);
   }
 }
