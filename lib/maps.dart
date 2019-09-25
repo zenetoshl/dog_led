@@ -17,7 +17,7 @@ class MapsHomeState extends State<MapsHome>
   Completer<GoogleMapController> _controller = Completer();
   var mark = Marker(
       position: LatLng(37.42796133580664, -122.085749655962),
-      markerId: MarkerId('olaa'),
+      markerId: MarkerId('Seu pet está aqui'),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed));
   final Set<Marker> markerSet = new Set();
   String title = '<Meu Pet>';
@@ -107,15 +107,13 @@ class MapsHomeState extends State<MapsHome>
 
   _read() async {
         final prefs = await SharedPreferences.getInstance();
-        final key = 'my_int_key';
+        final key = 'saved_name';
         final String newString = prefs.getString(key) ?? '';
         if(newString != '')
         setState(() {
           title = prefs.getString(key);
         });
-        print('read: $title');
       }
-
   @override
   bool get wantKeepAlive => true;
 }
