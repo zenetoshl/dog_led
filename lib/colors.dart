@@ -10,10 +10,11 @@ class ColorsHome extends StatefulWidget {
   ColorsHomeState createState() => ColorsHomeState();
 }
 
-class ColorsHomeState extends State<ColorsHome> {
+class ColorsHomeState extends State<ColorsHome>
+    with AutomaticKeepAliveClientMixin<ColorsHome> {
   LedColors color = LedColors.red; //receber da placa
   bool isOn = false; //tambem receber da placa
-  bool connected = false; //se está conectado com a placa, default será false
+  bool connected = true; //se está conectado com a placa, default será false
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,4 +141,6 @@ class ColorsHomeState extends State<ColorsHome> {
       ),
     );
   }
+  @override
+  bool get wantKeepAlive => true;
 }

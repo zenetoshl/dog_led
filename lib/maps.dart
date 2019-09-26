@@ -21,12 +21,12 @@ class MapsHomeState extends State<MapsHome>
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed));
   final Set<Marker> markerSet = new Set();
   String title = '<Meu Pet>';
-  LocationData petLocation;
+  LocationData location;
   LatLng petLatLng;
   CameraPosition petPos = CameraPosition(
     target: LatLng(-19.885121, -44.418271),
     zoom: 15,
-  ); //receber da placa
+  );
   Location locationService = new Location();
 
   Future<void> goToPet() async {
@@ -36,19 +36,27 @@ class MapsHomeState extends State<MapsHome>
 
   //platform configuration
   initPlatformState() async {
+    final GoogleMapController controller = await _controller.future;
     await locationService.changeSettings(
         accuracy: LocationAccuracy.HIGH, interval: 1000);
     bool serviceStatus = await locationService.serviceEnabled();
     if (serviceStatus) {
       bool permission = await locationService.requestPermission();
       if (permission) {
-        petLocation = await locationService.getLocation();
+        location = await locationService.getLocation();
         setState(() {
           petPos = CameraPosition(
-            target: LatLng(petLocation.latitude, petLocation.longitude),
+            target: LatLng(location.latitude, location.longitude),
             zoom: 20,
           );
         });
+        controller.animateCamera(
+          CameraUpdate.newCameraPosition(
+            new CameraPosition(
+                target: LatLng(location.latitude, location.longitude),
+                zoom: 15),
+          ),
+        );
       }
     }
   }
@@ -60,14 +68,18 @@ class MapsHomeState extends State<MapsHome>
         target: petLatLng,
         zoom: 20,
       );
-      setState(() {
-        markerSet.add(Marker(
-            position: petLatLng,
-            markerId: MarkerId('hehe'),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueBlue)));
-      });
-      //enviar para a placa
+      try {
+        setState(() {
+          markerSet.add(Marker(
+              position: petLatLng,
+              markerId: MarkerId('hehe'),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueBlue)));
+        });
+      } //enviar para a placa
+      catch (err) {
+        locationService = null;
+      }
     });
   }
 
@@ -77,6 +89,12 @@ class MapsHomeState extends State<MapsHome>
     _read();
     initPlatformState();
     sendLocation();
+  }
+
+  @override
+  void dispose() {
+    locationService = null;
+    super.dispose();
   }
 
   @mustCallSuper
@@ -106,14 +124,15 @@ class MapsHomeState extends State<MapsHome>
   }
 
   _read() async {
-        final prefs = await SharedPreferences.getInstance();
-        final key = 'saved_name';
-        final String newString = prefs.getString(key) ?? '';
-        if(newString != '')
-        setState(() {
-          title = prefs.getString(key);
-        });
-      }
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'saved_name';
+    final String newString = prefs.getString(key) ?? '';
+    if (newString != '')
+      setState(() {
+        title = prefs.getString(key);
+      });
+  }
+
   @override
   bool get wantKeepAlive => true;
 }
