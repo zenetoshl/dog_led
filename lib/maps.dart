@@ -123,13 +123,13 @@ class MapsHomeState extends State<MapsHome>
     );
   }
 
-  _read() async {
+  void _read() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'saved_name';
     final String newString = prefs.getString(key) ?? '';
     if (newString != '')
       setState(() {
-        title = prefs.getString(key);
+        title = newString;
       });
   }
 

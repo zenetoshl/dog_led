@@ -3,6 +3,8 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'dart:async';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class BluetoothScreen extends StatefulWidget {
   BluetoothScreen({
     this.title,
@@ -21,14 +23,24 @@ class BluetoothScreen extends StatefulWidget {
 
 class BluetoothScreenState extends State<BluetoothScreen> {
   bool loading = false;
+
   void initScan() async {
     if (loading) return;
     loading = true;
     FlutterBlue.instance
         .startScan(scanMode: ScanMode.balanced, timeout: Duration(seconds: 10));
-    Timer(Duration(seconds: 10), () {setState(() {
-      loading = false;
-    });});
+    Timer(Duration(seconds: 10), () {
+      setState(() {
+        loading = false;
+      });
+    });
+  }
+
+  void saveBluetoothId(BluetoothDevice device) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'device_id';
+    final value = device.id.toString();
+    if (value != null) prefs.setString(key, value);
   }
 
   @override
@@ -56,22 +68,18 @@ class BluetoothScreenState extends State<BluetoothScreen> {
                     title: Text(r.device.name),
                     subtitle: Text(r.device.id.toString()),
                     onTap: () {
-                      if (widget.device != null) {
-                        widget.device.disconnect();
-                      }
-                      r.device.connect();
-                      setState(() {
-                        widget.device = r.device;
-                      });
+                      saveBluetoothId(r.device);
                     },
                   );
                 }).toList(),
               ),
             ),
-             loading ? SpinKitFoldingCube(
-              color: Colors.lightBlue,
-              size: 30.0,
-            ) : SizedBox(),
+            loading
+                ? SpinKitFoldingCube(
+                    color: Colors.lightBlue,
+                    size: 30.0,
+                  )
+                : SizedBox(),
           ],
         ),
       ),

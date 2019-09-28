@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum LedColors { red, green, blue }
 
@@ -20,7 +21,58 @@ class ColorsHomeState extends State<ColorsHome>
     with AutomaticKeepAliveClientMixin<ColorsHome> {
   LedColors color = LedColors.red; //receber da placa
   bool isOn = false; //tambem receber da placa
-  bool connected = true; //se está conectado com a placa, default será false
+  bool connected = false; //se está conectado com a placa, default será false
+  String deviceId = '';
+  final String serviceId = "37f64eb3-c25f-449b-ba34-a5f5387fdb6d";
+  final String readCharId = "560d029d-57a1-4ccc-8868-9e4b4ef41da6";
+  final String writeCharId = "db433ed3-1e84-49d9-b287-487440e7137c";
+  BluetoothCharacteristic readChar;
+  BluetoothCharacteristic writeChar;
+
+  void findChar() async {
+    if (!connected) {
+      deviceId = await loadBluetoothId();
+      FlutterBlue.instance
+          .scan(scanMode: ScanMode.balanced, timeout: Duration(seconds: 10))
+          .listen((scanResult) async {
+        BluetoothDevice device = scanResult.device;
+        print(device.name);
+        if (device.id.toString() == deviceId) {
+          await device.connect();
+          List<BluetoothService> services = await device.discoverServices();
+          services.forEach((s) async {
+            if (s.uuid.toString() == serviceId) {
+              s.characteristics.forEach((c) async {
+                String uid = c.uuid.toString();
+                if (uid == writeCharId) {
+                  setState(() {
+                    writeChar = c;
+                  });
+                } else if (uid == readCharId) {
+                  setState(() {
+                    readChar = c;
+                  });
+                }
+                if (writeChar != null && readChar != null){
+                  setState(() {
+                    connected = true;
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    findChar();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,6 +199,14 @@ class ColorsHomeState extends State<ColorsHome>
       ),
     );
   }
+
+  Future<String> loadBluetoothId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'device_id';
+    final String newId = prefs.getString(key) ?? '';
+    return newId;
+  }
+
   @override
   bool get wantKeepAlive => true;
 }

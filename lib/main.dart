@@ -44,10 +44,6 @@ class CustomNavigationTabState extends State<CustomNavigationTab> {
 
   int currentIndex = 0;
   
-  void initScan() async {
-    FlutterBlue.instance
-        .startScan(scanMode: ScanMode.balanced, timeout: Duration(seconds: 10));
-  }
 
 
 
@@ -56,7 +52,6 @@ class CustomNavigationTabState extends State<CustomNavigationTab> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    initScan();
   }
 
   final pageController = PageController();
