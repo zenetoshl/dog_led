@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 enum LedColors { red, green, blue }
 
 class ColorsHome extends StatefulWidget {
-  ColorsHome({this.title});
+  ColorsHome({
+    this.title,
+    BluetoothDevice device,
+    BluetoothCharacteristic write,
+    BluetoothCharacteristic read,
+  });
 
   final String title;
 

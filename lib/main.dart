@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'maps.dart';
 import 'colors.dart';
 import 'settings.dart';
@@ -22,13 +23,41 @@ class CustomNavigationTab extends StatefulWidget {
 }
 
 class CustomNavigationTabState extends State<CustomNavigationTab> {
+  static BluetoothDevice device;
+  static BluetoothCharacteristic writeChar, readChar;
+
   static List<Widget> widgetOptions = <Widget>[
     MapsHome(title: 'Mapas'),
-    ColorsHome(title: 'Cores'),
-    SettingsHome(title: 'Settings'),
+    ColorsHome(
+      title: 'Cores',
+      device: device,
+      write: writeChar,
+      read: readChar,
+    ),
+    SettingsHome(
+      title: 'Settings',
+      device: device,
+      write: writeChar,
+      read: readChar,
+    ),
   ];
 
   int currentIndex = 0;
+  
+  void initScan() async {
+    FlutterBlue.instance
+        .startScan(scanMode: ScanMode.balanced, timeout: Duration(seconds: 10));
+  }
+
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initScan();
+  }
 
   final pageController = PageController();
   void onPageChanged(int index) {

@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'profile.dart';
+import 'bluetooth_config.dart';
 
 class SettingsHome extends StatefulWidget {
-  SettingsHome({this.title});
-
+  SettingsHome({
+    this.title,
+    BluetoothDevice device,
+    BluetoothCharacteristic write,
+    BluetoothCharacteristic read,
+  });
   final String title;
+  BluetoothDevice device;
+  BluetoothCharacteristic write;
+  BluetoothCharacteristic read;
 
   SettingsHomeState createState() => SettingsHomeState();
 }
@@ -29,14 +38,24 @@ class SettingsHomeState extends State<SettingsHome> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => ProfileScreen(title:'Perfil')),
+                    builder: (context) => ProfileScreen(title: 'Perfil')),
               );
             },
             trailing: Icon(Icons.chevron_right),
           ),
           ListTile(
             title: Text('Conexão Bluetooth'),
-            onTap: () {/*ir para a pagina de conexão bluetooth*/},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => BluetoothScreen(
+                          title: 'Conecte-se a um dispositivo',
+                          device: widget.device,
+                          read: widget.read,
+                          write: widget.write,
+                        )),
+              );
+            },
             trailing: Icon(Icons.chevron_right),
           ),
           ListTile(
@@ -49,4 +68,3 @@ class SettingsHomeState extends State<SettingsHome> {
     );
   }
 }
-
