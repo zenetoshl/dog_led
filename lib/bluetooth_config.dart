@@ -23,10 +23,13 @@ class BluetoothScreen extends StatefulWidget {
 
 class BluetoothScreenState extends State<BluetoothScreen> {
   bool loading = false;
+  String id = '';
 
   void initScan() async {
     if (loading) return;
-    loading = true;
+    setState(() {
+      loading = true;
+    });
     FlutterBlue.instance
         .startScan(scanMode: ScanMode.balanced, timeout: Duration(seconds: 10));
     Timer(Duration(seconds: 10), () {
@@ -43,10 +46,22 @@ class BluetoothScreenState extends State<BluetoothScreen> {
     if (value != null) prefs.setString(key, value);
   }
 
+  Future<String> loadBluetoothId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'device_id';
+    final String newId = prefs.getString(key) ?? '';
+    return newId;
+  }
+
+  void scan() async {
+    id = await loadBluetoothId();
+    initScan();
+  }
+
   @override
   void initState() {
     super.initState();
-    initScan();
+    scan();
   }
 
   @override
@@ -65,7 +80,13 @@ class BluetoothScreenState extends State<BluetoothScreen> {
               builder: (c, snapshot) => Column(
                 children: snapshot.data.map((r) {
                   return ListTile(
-                    title: Text(r.device.name),
+                    title: Text(
+                      r.device.name,
+                      style: TextStyle(
+                          color: (id == r.device.id.toString())
+                              ? Colors.green
+                              : Colors.grey),
+                    ),
                     subtitle: Text(r.device.id.toString()),
                     onTap: () {
                       saveBluetoothId(r.device);
@@ -75,9 +96,15 @@ class BluetoothScreenState extends State<BluetoothScreen> {
               ),
             ),
             loading
-                ? SpinKitFoldingCube(
-                    color: Colors.lightBlue,
-                    size: 30.0,
+                ? Center(
+                    child: SizedBox(
+                      child: SpinKitFoldingCube(
+                        color: Colors.lightBlue,
+                        size: 30.0,
+                      ),
+                      height: 41,
+                      width: 41,
+                    ),
                   )
                 : SizedBox(),
           ],

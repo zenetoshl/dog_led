@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum LedColors { red, green, blue }
@@ -22,6 +25,7 @@ class ColorsHomeState extends State<ColorsHome>
   LedColors color = LedColors.red; //receber da placa
   bool isOn = false; //tambem receber da placa
   bool connected = false; //se está conectado com a placa, default será false
+  bool loading = false;
   String deviceId = '';
   final String serviceId = "37f64eb3-c25f-449b-ba34-a5f5387fdb6d";
   final String readCharId = "560d029d-57a1-4ccc-8868-9e4b4ef41da6";
@@ -30,6 +34,10 @@ class ColorsHomeState extends State<ColorsHome>
   BluetoothCharacteristic writeChar;
 
   void findChar() async {
+    if (loading) return;
+    setState(() {
+      loading = true;
+    });
     if (!connected) {
       deviceId = await loadBluetoothId();
       FlutterBlue.instance
@@ -53,9 +61,10 @@ class ColorsHomeState extends State<ColorsHome>
                     readChar = c;
                   });
                 }
-                if (writeChar != null && readChar != null){
+                if (writeChar != null && readChar != null) {
                   setState(() {
                     connected = true;
+                    loading = false;
                   });
                 }
               });
@@ -71,6 +80,11 @@ class ColorsHomeState extends State<ColorsHome>
     // TODO: implement initState
     super.initState();
     findChar();
+    Timer(Duration(seconds: 10), () {
+      setState(() {
+        loading = false;
+      });
+    });
   }
 
   @override
@@ -179,21 +193,38 @@ class ColorsHomeState extends State<ColorsHome>
                   ),
                 ]
               : <Widget>[
-                  SizedBox(
-                    height: 150,
-                  ),
-                  Center(
-                    child: Text(
-                      'Falha de conexão!',
-                      style: Theme.of(context).textTheme.display2,
-                    ),
-                  ),
-                  Center(
-                    child: Text(
-                      'Placa não conectada.',
-                      style: Theme.of(context).textTheme.display1,
-                    ),
-                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(height: 200,),
+                      loading
+                          ? Center(
+                              child: SizedBox(
+                                child: SpinKitFoldingCube(
+                                  color: Colors.lightBlue,
+                                  size: 40.0,
+                                ),
+                                height: 54,
+                                width: 54,
+                              ),
+                            )
+                          : Center(
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    'Falha de conexão!',
+                                    style: Theme.of(context).textTheme.display2,
+                                  ),
+                                  Text(
+                                    'Placa não conectada.',
+                                    style: Theme.of(context).textTheme.display1,
+                                  ),
+                                ],
+                              ),
+                            ),
+                    ],
+                  )
                 ],
         ),
       ),
