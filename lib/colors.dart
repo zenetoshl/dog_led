@@ -40,6 +40,7 @@ class ColorsHomeState extends State<ColorsHome>
     });
     if (!connected) {
       deviceId = await loadBluetoothId();
+      if (deviceId == '') return;
       FlutterBlue.instance
           .scan(scanMode: ScanMode.balanced, timeout: Duration(seconds: 10))
           .listen((scanResult) async {
@@ -77,7 +78,6 @@ class ColorsHomeState extends State<ColorsHome>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     findChar();
     Timer(Duration(seconds: 10), () {
@@ -115,6 +115,7 @@ class ColorsHomeState extends State<ColorsHome>
                       activeColor: Colors.teal,
                       value: isOn,
                       onChanged: (bool value) {
+                        readChar.write([34]); // teste, favor tirar no futuro, acelera o led no codigo antigo da placa
                         setState(() {
                           isOn = value;
                         });

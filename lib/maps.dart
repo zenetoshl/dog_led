@@ -109,6 +109,7 @@ class MapsHomeState extends State<MapsHome>
         ),
       ),
       body: GoogleMap(
+        
         markers: markerSet,
         initialCameraPosition: petPos,
         onMapCreated: (GoogleMapController controller) {
