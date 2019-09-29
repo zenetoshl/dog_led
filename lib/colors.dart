@@ -202,7 +202,7 @@ class ColorsHomeState extends State<ColorsHome>
                           ? Center(
                               child: SizedBox(
                                 child: SpinKitFoldingCube(
-                                  color: Colors.lightBlue,
+                                  color: Theme.of(context).buttonColor,
                                   size: 40.0,
                                 ),
                                 height: 54,

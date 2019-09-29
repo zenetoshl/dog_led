@@ -83,9 +83,10 @@ class BluetoothScreenState extends State<BluetoothScreen> {
                     title: Text(
                       r.device.name,
                       style: TextStyle(
-                          color: (id == r.device.id.toString())
-                              ? Colors.green
-                              : Colors.grey),
+                        color: (id == r.device.id.toString())
+                            ? Colors.green
+                            : Colors.grey,
+                      ),
                     ),
                     subtitle: Text(r.device.id.toString()),
                     onTap: () {
@@ -99,7 +100,7 @@ class BluetoothScreenState extends State<BluetoothScreen> {
                 ? Center(
                     child: SizedBox(
                       child: SpinKitFoldingCube(
-                        color: Colors.lightBlue,
+                        color: Theme.of(context).buttonColor,
                         size: 30.0,
                       ),
                       height: 41,

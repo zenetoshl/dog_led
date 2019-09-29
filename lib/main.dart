@@ -11,7 +11,28 @@ class NavigationMain extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Dog Led',
-      theme: ThemeData(primarySwatch: Colors.lightBlue),
+      theme: ThemeData(
+        brightness: Brightness.light,
+        colorScheme: ColorScheme.light(),
+        primarySwatch: Colors.red,
+        primaryColor: Colors.red[700],
+        buttonColor: Colors.red[600],
+        accentColor: Colors.redAccent[400],
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Colors.red[300],
+        ),
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.dark(),
+        primarySwatch: Colors.pink,
+        primaryColor: Colors.pink[800],
+        buttonColor: Colors.pink[900],
+        accentColor: Colors.pinkAccent[400],
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Colors.pink[700],
+        ),
+      ),
       home: CustomNavigationTab(),
     );
   }
@@ -43,10 +64,6 @@ class CustomNavigationTabState extends State<CustomNavigationTab> {
   ];
 
   int currentIndex = 0;
-  
-
-
-
 
   @override
   void initState() {
