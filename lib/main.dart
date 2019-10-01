@@ -44,22 +44,14 @@ class CustomNavigationTab extends StatefulWidget {
 }
 
 class CustomNavigationTabState extends State<CustomNavigationTab> {
-  static BluetoothDevice device;
-  static BluetoothCharacteristic writeChar, readChar;
 
   static List<Widget> widgetOptions = <Widget>[
     MapsHome(title: 'Mapas'),
     ColorsHome(
       title: 'Cores',
-      device: device,
-      write: writeChar,
-      read: readChar,
     ),
     SettingsHome(
       title: 'Settings',
-      device: device,
-      write: writeChar,
-      read: readChar,
     ),
   ];
 

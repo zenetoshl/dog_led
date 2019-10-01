@@ -6,14 +6,8 @@ import 'bluetooth_config.dart';
 class SettingsHome extends StatefulWidget {
   SettingsHome({
     this.title,
-    BluetoothDevice device,
-    BluetoothCharacteristic write,
-    BluetoothCharacteristic read,
   });
   final String title;
-  BluetoothDevice device;
-  BluetoothCharacteristic write;
-  BluetoothCharacteristic read;
 
   SettingsHomeState createState() => SettingsHomeState();
 }
@@ -50,9 +44,6 @@ class SettingsHomeState extends State<SettingsHome> {
                 MaterialPageRoute(
                     builder: (context) => BluetoothScreen(
                           title: 'Conecte-se a um dispositivo',
-                          device: widget.device,
-                          read: widget.read,
-                          write: widget.write,
                         )),
               );
             },

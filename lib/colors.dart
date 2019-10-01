@@ -10,9 +10,6 @@ enum LedColors { red, green, blue }
 class ColorsHome extends StatefulWidget {
   ColorsHome({
     this.title,
-    BluetoothDevice device,
-    BluetoothCharacteristic write,
-    BluetoothCharacteristic read,
   });
 
   final String title;
@@ -115,7 +112,6 @@ class ColorsHomeState extends State<ColorsHome>
                       activeColor: Colors.teal,
                       value: isOn,
                       onChanged: (bool value) {
-                        readChar.write([34]); // teste, favor tirar no futuro, acelera o led no codigo antigo da placa
                         setState(() {
                           isOn = value;
                         });
@@ -151,6 +147,9 @@ class ColorsHomeState extends State<ColorsHome>
                       value: LedColors.red,
                       groupValue: color,
                       onChanged: (LedColors value) {
+                        readChar.write([
+                          34
+                        ]); // teste, favor tirar no futuro, acelera o led no codigo antigo da placa
                         //mandar para a placa
                         setState(() {
                           color = value;
@@ -185,6 +184,9 @@ class ColorsHomeState extends State<ColorsHome>
                       value: LedColors.blue,
                       groupValue: color,
                       onChanged: (LedColors value) {
+                        readChar.write([
+                          35
+                        ]); // teste, favor tirar no futuro, acelera o led no codigo antigo da placa
                         //mandar para a placa
                         setState(() {
                           color = value;
@@ -198,7 +200,9 @@ class ColorsHomeState extends State<ColorsHome>
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      SizedBox(height: 200,),
+                      SizedBox(
+                        height: 200,
+                      ),
                       loading
                           ? Center(
                               child: SizedBox(

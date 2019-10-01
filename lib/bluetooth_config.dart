@@ -8,15 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class BluetoothScreen extends StatefulWidget {
   BluetoothScreen({
     this.title,
-    BluetoothDevice device,
-    BluetoothCharacteristic write,
-    BluetoothCharacteristic read,
   });
 
   final String title;
-  BluetoothDevice device;
-  BluetoothCharacteristic write;
-  BluetoothCharacteristic read;
 
   BluetoothScreenState createState() => BluetoothScreenState();
 }
@@ -39,7 +33,7 @@ class BluetoothScreenState extends State<BluetoothScreen> {
     });
   }
 
-  void saveBluetoothId(BluetoothDevice device) async {
+  Future<void> saveBluetoothId(BluetoothDevice device) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'device_id';
     final value = device.id.toString();
@@ -89,8 +83,12 @@ class BluetoothScreenState extends State<BluetoothScreen> {
                       ),
                     ),
                     subtitle: Text(r.device.id.toString()),
-                    onTap: () {
-                      saveBluetoothId(r.device);
+                    onTap: () async {
+                      await saveBluetoothId(r.device);
+                      id = await loadBluetoothId();
+                      setState(() {
+                        id = id;
+                      });
                     },
                   );
                 }).toList(),
