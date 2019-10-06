@@ -7,6 +7,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/dog_heart" />
+            android:src="@drawable/dog_heart" />z
     </item>
 </layer-list>

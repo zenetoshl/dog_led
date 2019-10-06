@@ -1,0 +1,9 @@
+{
+    "terminal.integrated.env.linux": {
+        "PATH": "/home/zeneto/.platformio/penv/bin:/home/zeneto/.platformio/penv:/home/zeneto/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/sbin:/usr/sbin:/home/zeneto/.dotnet/tools:/home/zeneto/Android/Sdk/tools:/home/zeneto/Android/Sdk/platform-tools:/home/zeneto/Android/flutter/bin",
+        "PLATFORMIO_CALLER": "vscode"
+    },
+    "files.associations": {
+        "cmath": "cpp"
+    }
+}
