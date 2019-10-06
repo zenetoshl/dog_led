@@ -12,8 +12,7 @@ class MapsHome extends StatefulWidget {
   MapsHomeState createState() => MapsHomeState();
 }
 
-class MapsHomeState extends State<MapsHome>
-    with AutomaticKeepAliveClientMixin<MapsHome> {
+class MapsHomeState extends State<MapsHome> {
   Completer<GoogleMapController> _controller = Completer();
   var mark = Marker(
       position: LatLng(37.42796133580664, -122.085749655962),
@@ -109,7 +108,6 @@ class MapsHomeState extends State<MapsHome>
         ),
       ),
       body: GoogleMap(
-        
         markers: markerSet,
         initialCameraPosition: petPos,
         onMapCreated: (GoogleMapController controller) {
@@ -133,7 +131,4 @@ class MapsHomeState extends State<MapsHome>
         title = newString;
       });
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

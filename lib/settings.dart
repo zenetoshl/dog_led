@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 import 'profile.dart';
 import 'bluetooth_config.dart';
+import 'wifi_config.dart';
 
 class SettingsHome extends StatefulWidget {
   SettingsHome({
@@ -49,9 +49,23 @@ class SettingsHomeState extends State<SettingsHome> {
             },
             trailing: Icon(Icons.chevron_right),
           ),
+          /*
           ListTile(
             title: Text('Google IoT'),
-            onTap: () {/*ir para a pagina de configuração do google IoT*/},
+            onTap: () {},
+            trailing: Icon(Icons.chevron_right),
+          ),
+          */
+          ListTile(
+            title: Text('WiFi'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => WifiScreen(
+                          title: 'Conecte-se a um dispositivo',
+                        )),
+              );
+            },
             trailing: Icon(Icons.chevron_right),
           ),
         ],

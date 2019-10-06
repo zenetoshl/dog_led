@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -17,20 +17,49 @@ class ColorsHome extends StatefulWidget {
   ColorsHomeState createState() => ColorsHomeState();
 }
 
-class ColorsHomeState extends State<ColorsHome>
-    with AutomaticKeepAliveClientMixin<ColorsHome> {
+class ColorsHomeState extends State<ColorsHome> {
   LedColors color = LedColors.red; //receber da placa
   bool isOn = false; //tambem receber da placa
   bool connected = false; //se está conectado com a placa, default será false
   bool loading = false;
   String deviceId = '';
+  BluetoothDevice device;
   final String serviceId = "37f64eb3-c25f-449b-ba34-a5f5387fdb6d";
   final String readCharId = "560d029d-57a1-4ccc-8868-9e4b4ef41da6";
-  final String writeCharId = "db433ed3-1e84-49d9-b287-487440e7137c";
+  final String writeCharId = "13b5c4de-89af-4231-8ec3-b9fe596c10ea";
   BluetoothCharacteristic readChar;
   BluetoothCharacteristic writeChar;
 
-  void findChar() async {
+  void findServices() async {
+    if (device == null) return;
+    print(device.name);
+    List<BluetoothService> services = await device.discoverServices();
+    services.forEach((s) async {
+      if (s.uuid.toString() == serviceId) {
+        s.characteristics.forEach((c) async {
+          String uid = c.uuid.toString();
+          print(uid);
+          if (uid == writeCharId) {
+            setState(() {
+              writeChar = c;
+            });
+          } else if (uid == readCharId) {
+            setState(() {
+              readChar = c;
+            });
+          }
+          if (writeChar != null && readChar != null) {
+            setState(() {
+              connected = true;
+              loading = false;
+            });
+          }
+        });
+      }
+    });
+  }
+
+  void findDevice() async {
     if (loading) return;
     setState(() {
       loading = true;
@@ -38,45 +67,35 @@ class ColorsHomeState extends State<ColorsHome>
     if (!connected) {
       deviceId = await loadBluetoothId();
       if (deviceId == '') return;
-      FlutterBlue.instance
-          .scan(scanMode: ScanMode.balanced, timeout: Duration(seconds: 10))
-          .listen((scanResult) async {
-        BluetoothDevice device = scanResult.device;
-        print(device.name);
-        if (device.id.toString() == deviceId) {
-          await device.connect();
-          List<BluetoothService> services = await device.discoverServices();
-          services.forEach((s) async {
-            if (s.uuid.toString() == serviceId) {
-              s.characteristics.forEach((c) async {
-                String uid = c.uuid.toString();
-                if (uid == writeCharId) {
-                  setState(() {
-                    writeChar = c;
-                  });
-                } else if (uid == readCharId) {
-                  setState(() {
-                    readChar = c;
-                  });
-                }
-                if (writeChar != null && readChar != null) {
-                  setState(() {
-                    connected = true;
-                    loading = false;
-                  });
-                }
-              });
-            }
-          });
-        }
+      var connected = await FlutterBlue.instance.connectedDevices;
+      device = connected.firstWhere((e) {
+        print(e.id.toString());
+        return (e.id.toString() == deviceId);
+      }, orElse: () {
+        return (null);
       });
+      if (device == null) {
+        FlutterBlue.instance
+            .scan(scanMode: ScanMode.balanced, timeout: Duration(seconds: 10))
+            .listen((scanResult) async {
+          if (scanResult.device.id.toString() == deviceId) {
+            device = scanResult.device;
+            await device.connect();
+            findServices();
+          }
+        });
+      } else {
+        findServices();
+        return;
+      }
+      print("nao foi possivel achar o dispositivo");
     }
   }
 
   @override
   void initState() {
     super.initState();
-    findChar();
+    findDevice();
     Timer(Duration(seconds: 10), () {
       setState(() {
         loading = false;
@@ -236,6 +255,13 @@ class ColorsHomeState extends State<ColorsHome>
     );
   }
 
+  void disconnect() async {
+    await FlutterBlue.instance.stopScan();
+    if (device != null) {
+      device.disconnect();
+    }
+  }
+
   Future<String> loadBluetoothId() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'device_id';
@@ -244,5 +270,8 @@ class ColorsHomeState extends State<ColorsHome>
   }
 
   @override
-  bool get wantKeepAlive => true;
+  void dispose() {
+    disconnect();
+    super.dispose();
+  }
 }

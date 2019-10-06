@@ -59,6 +59,12 @@ class BluetoothScreenState extends State<BluetoothScreen> {
   }
 
   @override
+  void dispose() {
+    FlutterBlue.instance.stopScan();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -86,6 +92,7 @@ class BluetoothScreenState extends State<BluetoothScreen> {
                     onTap: () async {
                       await saveBluetoothId(r.device);
                       id = await loadBluetoothId();
+                      await r.device.connect();
                       setState(() {
                         id = id;
                       });

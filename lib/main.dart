@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 import 'maps.dart';
 import 'colors.dart';
 import 'settings.dart';
@@ -26,7 +25,7 @@ class NavigationMain extends StatelessWidget {
         brightness: Brightness.dark,
         colorScheme: ColorScheme.dark(),
         primarySwatch: Colors.pink,
-        primaryColor: Colors.pink[800],
+        primaryColor: Colors.pink[900],
         buttonColor: Colors.pink[900],
         accentColor: Colors.pinkAccent[400],
         floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -59,7 +58,6 @@ class CustomNavigationTabState extends State<CustomNavigationTab> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
