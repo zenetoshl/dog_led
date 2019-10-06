@@ -162,17 +162,12 @@ class WifiScreenState extends State<WifiScreen> {
                               wifiSsid = text;
                             });
                           },
-                          enabled: editable,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(gapPadding: 6.0),
                             focusColor: Colors.green,
                             labelText: 'SSID',
                           ),
                         ),
-                      ),
-                      IconButton(
-                        icon: Icon(editable ? Icons.cancel : Icons.edit),
-                        onPressed: toggleEditable,
                       ),
                     ],
                   ),
@@ -190,17 +185,12 @@ class WifiScreenState extends State<WifiScreen> {
                               wifiPassword = text;
                             });
                           },
-                          enabled: editable,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(gapPadding: 6.0),
                             focusColor: Colors.green,
                             labelText: 'Password',
                           ),
                         ),
-                      ),
-                      IconButton(
-                        icon: Icon(editable ? Icons.cancel : Icons.edit),
-                        onPressed: toggleEditable,
                       ),
                     ],
                   ),
@@ -213,7 +203,9 @@ class WifiScreenState extends State<WifiScreen> {
                             toggleEditable();
                           }
                         : () {},
-                    color: editable ? Colors.blue : Colors.grey,
+                    color: (wifiPassword != '' && wifiSsid != '')
+                        ? Colors.blue
+                        : Colors.grey,
                   ),
                 ],
         ),
