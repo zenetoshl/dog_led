@@ -108,6 +108,9 @@ class WifiScreenState extends State<WifiScreen> {
   void initState() {
     super.initState();
     findDevice();
+    Timer(Duration(seconds: 10), (){setState(() {
+      loading = false;
+    });});
   }
 
   void disconnect() async {
@@ -131,27 +134,40 @@ class WifiScreenState extends State<WifiScreen> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: loading
-              ? <Widget>[
-                  Center(
-                    child: SizedBox(
-                      child: SpinKitFoldingCube(
-                        color: Theme.of(context).buttonColor,
-                        size: 30.0,
+      body: Container(
+        child: !btConnected
+            ? Center(
+                child: loading
+                    ? SizedBox(
+                        child: SpinKitFoldingCube(
+                          color: Theme.of(context).buttonColor,
+                          size: 50.0,
+                        ),
+                        height: 61,
+                        width: 61,
+                      )
+                    : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Falha de conexão!',
+                            style: Theme.of(context).textTheme.display2,
+                          ),
+                          Text(
+                            'Placa não conectada.',
+                            style: Theme.of(context).textTheme.display1,
+                          ),
+                        ],
                       ),
-                      height: 41,
-                      width: 41,
-                    ),
-                  ),
-                ]
-              : <Widget>[
-                  Row(
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       SizedBox(
-                        width: 20,
+                        height: 20,
                       ),
                       SizedBox(
                         width: 200,
@@ -169,12 +185,8 @@ class WifiScreenState extends State<WifiScreen> {
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
                       SizedBox(
-                        width: 20,
+                        height: 10,
                       ),
                       SizedBox(
                         width: 200,
@@ -192,30 +204,33 @@ class WifiScreenState extends State<WifiScreen> {
                           ),
                         ),
                       ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.network_wifi),
+                        onPressed: (wifiPassword != '' && wifiSsid != '')
+                            ? () async {
+                                await saveWifiCredentials();
+                                await sendCredentials();
+                                toggleEditable();
+                              }
+                            : () {},
+                        color: (wifiPassword != '' && wifiSsid != '')
+                            ? Colors.blue
+                            : Colors.grey,
+                      ),
                     ],
                   ),
-                  IconButton(
-                    icon: Icon(Icons.save),
-                    onPressed: (wifiPassword != '' && wifiSsid != '')
-                        ? () async {
-                            await saveWifiCredentials();
-                            await sendCredentials();
-                            toggleEditable();
-                          }
-                        : () {},
-                    color: (wifiPassword != '' && wifiSsid != '')
-                        ? Colors.blue
-                        : Colors.grey,
-                  ),
                 ],
-        ),
+              ),
       ),
     );
   }
 
   Future<void> sendCredentials() async {
     await writeCredentialsChar.write((latin.encode('S$wifiSsid')));
-    Timer(Duration(milliseconds: 300), () async {
+    Timer(Duration(milliseconds: 100), () async {
       writeCredentialsChar.write(latin.encode('P$wifiPassword'));
     });
   }
