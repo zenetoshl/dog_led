@@ -27,9 +27,6 @@ bool ssidChanged;
 bool hasWifi;
 int LED_BUILTIN;
 
-const int wifiConnected = 67;
-const int wifiDisconnected = 68;
-
 void wifiSetup();
 void InitWifi();
 void btSetup();
@@ -108,11 +105,8 @@ void InitWifi()
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
-    i = i + 1;
-    if (i > 30)
-    {
-      break;
-    }
+    i++;
+    if (i > 30) break;
   }
   digitalWrite(LED_BUILTIN, LOW);
   if (WiFi.status() == WL_CONNECTED)
