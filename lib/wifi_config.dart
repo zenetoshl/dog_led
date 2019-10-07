@@ -33,14 +33,10 @@ class WifiScreenState extends State<WifiScreen> {
   String wifiSsid = '';
   String wifiPassword = '';
 
-  bool editable = false;
   Latin1Codec latin = new Latin1Codec();
 
-  void toggleEditable() {
-    setState(() {
-      editable = editable ? false : true;
-    });
-  }
+  bool passwordVisible = true;
+
 
   void findServices() async {
     if (device == null) return;
@@ -108,9 +104,11 @@ class WifiScreenState extends State<WifiScreen> {
   void initState() {
     super.initState();
     findDevice();
-    Timer(Duration(seconds: 10), (){setState(() {
-      loading = false;
-    });});
+    Timer(Duration(seconds: 10), () {
+      setState(() {
+        loading = false;
+      });
+    });
   }
 
   void disconnect() async {
@@ -147,7 +145,7 @@ class WifiScreenState extends State<WifiScreen> {
                         width: 61,
                       )
                     : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
                             'Falha de conexão!',
@@ -197,10 +195,23 @@ class WifiScreenState extends State<WifiScreen> {
                               wifiPassword = text;
                             });
                           },
+                          obscureText: passwordVisible,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(gapPadding: 6.0),
                             focusColor: Colors.green,
                             labelText: 'Password',
+                            suffixIcon: IconButton(
+                              iconSize: 20,
+                              icon: Icon(passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  passwordVisible =
+                                      passwordVisible ? false : true;
+                                });
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -208,12 +219,16 @@ class WifiScreenState extends State<WifiScreen> {
                         height: 5,
                       ),
                       IconButton(
-                        icon: Icon(Icons.network_wifi),
+                        icon: Icon(
+                          Icons.network_wifi,
+                          color: Theme.of(context).accentColor,
+                          size: 30,
+                        ),
                         onPressed: (wifiPassword != '' && wifiSsid != '')
                             ? () async {
                                 await saveWifiCredentials();
                                 await sendCredentials();
-                                toggleEditable();
+                                Navigator.pop(context);
                               }
                             : () {},
                         color: (wifiPassword != '' && wifiSsid != '')
