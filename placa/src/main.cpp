@@ -96,7 +96,12 @@ void InitWifi()
 {
   Serial.print(ssid.c_str());
   Serial.print(password.c_str());
-  digitalWrite(LED_BUILTIN, HIGH);
+  if (hasWifi)
+  {
+    WiFi.disconnect();
+    digitalWrite(LED_BUILTIN, LOW);
+    hasWifi = false;
+  }
 
   WiFi.begin(ssid.c_str(), password.c_str());
   int i = 0;
@@ -113,6 +118,11 @@ void InitWifi()
   if (WiFi.status() == WL_CONNECTED)
   {
     hasWifi = true;
+    digitalWrite(LED_BUILTIN, HIGH);
+  }
+  else
+  {
+    Serial.println("não foi possível se conectar à rede! ssid ou senha estão errados");
   }
   passwordChanged = false;
   ssidChanged = false;
@@ -125,7 +135,6 @@ void wifiSetup()
   hasWifi = false;
 }
 
-
 void setup()
 {
   Serial.begin(9600);
@@ -135,7 +144,7 @@ void setup()
 
 void loop()
 {
-  if (!hasWifi && passwordChanged && ssidChanged)
+  if (passwordChanged && ssidChanged)
   {
     InitWifi();
   }
