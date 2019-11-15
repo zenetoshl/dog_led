@@ -1,3 +1,4 @@
+import 'package:dog_led/iot_config.dart';
 import 'package:flutter/material.dart';
 import 'profile.dart';
 import 'bluetooth_config.dart';
@@ -49,14 +50,19 @@ class SettingsHomeState extends State<SettingsHome> {
             },
             trailing: Icon(Icons.chevron_right),
           ),
-          /*
+          
           ListTile(
-            title: Text('Google IoT'),
-            onTap: () {},
+            title: Text('Cerca digital'),
+            onTap: () {Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => IotScreen(
+                          title: 'Crie uma nova cerca',
+                        )),
+              );},
             trailing: Icon(Icons.chevron_right),
           ),
-          */
-          ListTile(
+          
+          /*ListTile(
             title: Text('WiFi'),
             onTap: () {
               Navigator.of(context).push(
@@ -67,7 +73,7 @@ class SettingsHomeState extends State<SettingsHome> {
               );
             },
             trailing: Icon(Icons.chevron_right),
-          ),
+          ),*/
         ],
       ),
     );

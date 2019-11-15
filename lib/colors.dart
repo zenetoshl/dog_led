@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
-enum LedColors { red, green, blue }
+enum LedColors { red, green, yellow }
 
 class ColorsHome extends StatefulWidget {
   ColorsHome({
@@ -21,6 +22,7 @@ class ColorsHomeState extends State<ColorsHome> {
   bool isOn = false; //tambem receber da placa
   bool connected = false; //se está conectado com a placa, default será false
   bool loading = false;
+  bool blinking = false;
   String deviceId = '';
   BluetoothDevice device;
   final String serviceId = "37f64eb3-c25f-449b-ba34-a5f5387fdb6d";
@@ -28,6 +30,8 @@ class ColorsHomeState extends State<ColorsHome> {
   final String writeCharId = "13b5c4de-89af-4231-8ec3-b9fe596c10ea";
   BluetoothCharacteristic readChar;
   BluetoothCharacteristic writeChar;
+
+  Latin1Codec latin = new Latin1Codec();
 
   void findServices() async {
     if (device == null) return;
@@ -87,7 +91,7 @@ class ColorsHomeState extends State<ColorsHome> {
         findServices();
         return;
       }
-      print("nao foi possivel achar o dispositivo");
+      print("nao foi possivel encontrar o dispositivo");
     }
   }
 
@@ -125,13 +129,29 @@ class ColorsHomeState extends State<ColorsHome> {
                     height: 10,
                   ),
                   ListTile(
-                    title: Text(isOn ? 'Ligado!' : 'Desligado!'),
+                    title: Text('Ligar'),
                     leading: new Switch(
-                      activeColor: Colors.teal,
                       value: isOn,
                       onChanged: (bool value) {
+                        readChar.write(latin.encode('O' + (isOn ? 'F' : 'N')));
                         setState(() {
                           isOn = value;
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ListTile(
+                    title: Text('Piscar'),
+                    leading: new Switch(
+                      value: blinking,
+                      onChanged: (bool value) {
+                        readChar
+                            .write(latin.encode('B' + (blinking ? 'F' : 'N')));
+                        setState(() {
+                          blinking = value;
                         });
                       },
                     ),
@@ -165,9 +185,27 @@ class ColorsHomeState extends State<ColorsHome> {
                       value: LedColors.red,
                       groupValue: color,
                       onChanged: (LedColors value) {
-                        readChar.write([
-                          34
-                        ]); // teste, favor tirar no futuro, acelera o led no codigo antigo da placa
+                        readChar.write(latin.encode(
+                            'CR')); // teste, favor tirar no futuro, acelera o led no codigo antigo da placa
+                        //mandar para a placa
+                        setState(() {
+                          color = value;
+                        });
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Amarelo',
+                      style: Theme.of(context).textTheme.subtitle,
+                    ),
+                    leading: new Radio(
+                      activeColor: Colors.yellow,
+                      value: LedColors.yellow,
+                      groupValue: color,
+                      onChanged: (LedColors value) {
+                        readChar.write(latin.encode(
+                            'CY')); // teste, favor tirar no futuro, acelera o led no codigo antigo da placa
                         //mandar para a placa
                         setState(() {
                           color = value;
@@ -185,27 +223,7 @@ class ColorsHomeState extends State<ColorsHome> {
                       value: LedColors.green,
                       groupValue: color,
                       onChanged: (LedColors value) {
-                        //mandar para a placa
-                        setState(() {
-                          color = value;
-                        });
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Azul',
-                      style: Theme.of(context).textTheme.subtitle,
-                    ),
-                    leading: new Radio(
-                      activeColor: Colors.blue,
-                      value: LedColors.blue,
-                      groupValue: color,
-                      onChanged: (LedColors value) {
-                        readChar.write([
-                          35
-                        ]); // teste, favor tirar no futuro, acelera o led no codigo antigo da placa
-                        //mandar para a placa
+                        readChar.write(latin.encode('CG'));
                         setState(() {
                           color = value;
                         });

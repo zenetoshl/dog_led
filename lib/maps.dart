@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapsHome extends StatefulWidget {
   MapsHome({this.title});
@@ -22,6 +24,16 @@ class MapsHomeState extends State<MapsHome> {
   String title = '<Meu Pet>';
   LocationData location;
   LatLng petLatLng;
+  LatLng newPetPos;
+  bool loading = false;
+  bool btConnected = false;
+
+  BluetoothDevice device;
+  BluetoothCharacteristic readLatChar;
+  BluetoothCharacteristic readLngChar;
+  String deviceId = '';
+  List<int> lat, lng;
+
   CameraPosition petPos = CameraPosition(
     target: LatLng(-19.885121, -44.418271),
     zoom: 15,
@@ -62,16 +74,24 @@ class MapsHomeState extends State<MapsHome> {
 
   void sendLocation() async {
     locationService.onLocationChanged().listen((LocationData result) async {
-      petLatLng = LatLng(result.latitude, result.longitude);
-      petPos = CameraPosition(
-        target: petLatLng,
-        zoom: 20,
-      );
       try {
+        Firestore.instance
+            .collection('device')
+            .document('locations')
+            .get()
+            .then((DocumentSnapshot ds) {
+          List<String> latlngAux = ds.data['location'].toString().split(",");
+          newPetPos = new LatLng(
+              double.parse(latlngAux.first), double.parse(latlngAux.last));
+        });
+        petPos = CameraPosition(
+          target: newPetPos,
+          zoom: 20,
+        );
         setState(() {
           markerSet.add(Marker(
-              position: petLatLng,
-              markerId: MarkerId('hehe'),
+              position: newPetPos,
+              markerId: MarkerId('your pet'),
               icon: BitmapDescriptor.defaultMarkerWithHue(
                   BitmapDescriptor.hueBlue)));
         });
@@ -81,6 +101,8 @@ class MapsHomeState extends State<MapsHome> {
       }
     });
   }
+
+ 
 
   @override
   void initState() {
@@ -120,6 +142,13 @@ class MapsHomeState extends State<MapsHome> {
         icon: Icon(Icons.pets),
       ),
     );
+  }
+
+  Future<String> loadBluetoothId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'device_id';
+    final String newId = prefs.getString(key) ?? '';
+    return newId;
   }
 
   void _read() async {

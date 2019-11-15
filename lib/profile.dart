@@ -11,13 +11,6 @@ class ProfileScreen extends StatefulWidget {
 
 class ProfileScreenState extends State<ProfileScreen> {
   String newName = '';
-  bool editable = false;
-
-  void toggleEditable() {
-    setState(() {
-      editable = editable ? false : true;
-    });
-  }
 
   @mustCallSuper
   @override
@@ -46,7 +39,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                         newName = text;
                       });
                     },
-                    enabled: editable,
+                    enabled: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(gapPadding: 6.0),
                       focusColor: Colors.green,
@@ -55,18 +48,9 @@ class ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(editable ? Icons.cancel : Icons.edit),
-                  onPressed: toggleEditable,
-                ),
-                IconButton(
                   icon: Icon(Icons.save),
-                  onPressed: editable
-                      ? () {
-                          _save();
-                          toggleEditable();
-                        }
-                      : () {},
-                  color: editable ? Colors.blue : Colors.grey,
+                  onPressed: _save,
+                  color: Colors.blue,
                 )
               ],
             ),

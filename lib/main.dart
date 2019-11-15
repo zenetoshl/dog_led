@@ -16,6 +16,7 @@ class NavigationMain extends StatelessWidget {
         primarySwatch: Colors.red,
         primaryColor: Colors.red[700],
         buttonColor: Colors.red[600],
+        toggleableActiveColor: Colors.red[600],
         accentColor: Colors.redAccent[400],
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: Colors.red[300],
@@ -27,6 +28,7 @@ class NavigationMain extends StatelessWidget {
         primarySwatch: Colors.pink,
         primaryColor: Colors.pink[900],
         buttonColor: Colors.pink[900],
+        toggleableActiveColor: Colors.pink[600],
         accentColor: Colors.pinkAccent[400],
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: Colors.pink[700],

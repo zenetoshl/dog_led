@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "557787247641",
+    "firebase_url": "https://esp32-dogled.firebaseio.com",
+    "project_id": "esp32-dogled",
+    "storage_bucket": "esp32-dogled.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:557787247641:android:a8cced5d559ea9228c6688",
+        "android_client_info": {
+          "package_name": "com.example.dog_led"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "557787247641-sa8fi3nf7kesku8kkn9vn44ehdslb01i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCun1fExPfT-cFgWBYWimIpgWX3HAEeYKY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "557787247641-sa8fi3nf7kesku8kkn9vn44ehdslb01i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:557787247641:android:3c0a4d154962a9628c6688",
+        "android_client_info": {
+          "package_name": "dogled.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "557787247641-sa8fi3nf7kesku8kkn9vn44ehdslb01i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCun1fExPfT-cFgWBYWimIpgWX3HAEeYKY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "557787247641-sa8fi3nf7kesku8kkn9vn44ehdslb01i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
