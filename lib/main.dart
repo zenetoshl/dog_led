@@ -10,6 +10,7 @@ class NavigationMain extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Dog Led',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
         colorScheme: ColorScheme.light(),
@@ -45,7 +46,6 @@ class CustomNavigationTab extends StatefulWidget {
 }
 
 class CustomNavigationTabState extends State<CustomNavigationTab> {
-
   static List<Widget> widgetOptions = <Widget>[
     MapsHome(title: 'Mapas'),
     ColorsHome(
