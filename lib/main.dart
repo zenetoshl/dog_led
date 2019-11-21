@@ -89,7 +89,7 @@ class CustomNavigationTabState extends State<CustomNavigationTab> {
         children: widgetOptions,
         controller: pageController,
         onPageChanged: onPageChanged,
-      ),
+      )
     );
   }
 }
