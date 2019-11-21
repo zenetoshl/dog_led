@@ -1,7 +1,6 @@
 //
 //  Generated file. Do not edit.
 //
-
 #import "GeneratedPluginRegistrant.h"
 #import <cloud_firestore/CloudFirestorePlugin.h>
 #import <firebase_core/FirebaseCorePlugin.h>
